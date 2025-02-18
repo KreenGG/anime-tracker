@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: game-market-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "54321:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+
+volumes:
+  db-data:
