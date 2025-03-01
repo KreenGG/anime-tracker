@@ -1,7 +1,8 @@
+import logging
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import async_session_maker
 from src.exceptions.auth import InvalidCredentialsError, UserAlreadyExistsError
 from src.models.user import User
 from src.schemas.auth import Token
@@ -12,6 +13,7 @@ from src.utils.auth import (
     verify_password,
 )
 
+logger = logging.getLogger(__name__)
 
 async def create_user(
     user_data: UserRegister,
@@ -31,6 +33,7 @@ async def create_user(
 
     session.add(user)
     await session.commit()
+    logger.debug("User %s created", user.email)
 
 async def authenticate_user(
     user_data: UserLogin,
@@ -46,6 +49,8 @@ async def authenticate_user(
 
     user = UserDTO.model_validate(user)
     token = create_access_token(user)
+    
+    logger.debug("Token for user %s created", user.email)
 
     return token
 
