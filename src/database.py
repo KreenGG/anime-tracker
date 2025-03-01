@@ -20,7 +20,12 @@ class Base(DeclarativeBase):
     pass
 
 
-async_session_maker = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
+async_session_maker = async_sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+    expire_on_commit=False,
+)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession, Any]:

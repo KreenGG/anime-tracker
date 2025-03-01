@@ -2,7 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.database import get_session
 from src.exceptions.auth import (
     AuthError,
 )
@@ -24,9 +26,12 @@ router = APIRouter(tags=["Auth"])
         },
     },
 )
-async def register(user_data: UserRegister) -> dict:
+async def register(
+    user_data: UserRegister,
+    session: Annotated[AsyncSession, Depends(get_session)],
+) -> dict:
     try:
-        await create_user(user_data)
+        await create_user(user_data, session)
     except AuthError as e:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
@@ -38,13 +43,14 @@ async def register(user_data: UserRegister) -> dict:
 @router.post("/login", response_model=Token)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     user_data = UserLogin(
         email=form_data.username,
         password=form_data.password,
     )
     try:
-        token = await authenticate_user(user_data)
+        token = await authenticate_user(user_data, session)
     except AuthError as e:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
