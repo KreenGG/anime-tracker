@@ -1,17 +1,18 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
-from src.exceptions.user import (
-    UserError,
+from src.exceptions.auth import (
+    AuthError,
 )
+from src.schemas.auth import Token
 from src.schemas.user import UserLogin, UserRegister
-from src.services.user import create_user, login_user
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+from src.services.user import authenticate_user, create_user
 
 router = APIRouter(tags=["Auth"])
+
+
 
 @router.post(
     "/register",
@@ -26,15 +27,15 @@ router = APIRouter(tags=["Auth"])
 async def register(user_data: UserRegister) -> dict:
     try:
         await create_user(user_data)
-    except UserError as e:
+    except AuthError as e:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
             e.detail,
-        ) from UserError
+        ) from AuthError
 
     return {"success": True}
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
@@ -43,20 +44,15 @@ async def login(
         password=form_data.password,
     )
     try:
-        token = await login_user(user_data)
-    except UserError as e:
+        token = await authenticate_user(user_data)
+    except AuthError as e:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
             e.detail,
-        ) from UserError
+        ) from AuthError
 
 
-    return {"access_token": token}
-
-
-# TODO: Сделать функцию получения пользователя и проверки токена, для остального функционала
-@router.get("/check")
-async def check_token(
-    token: Annotated[str, Depends(oauth2_scheme)],
-):
-    return {"token": token}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+    }

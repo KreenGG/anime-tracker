@@ -1,32 +1,48 @@
 from datetime import UTC, datetime, timedelta
 
+import bcrypt
 import jwt
-from passlib.context import CryptContext
 
 from src.config import config
+from src.schemas.auth import TokenPayload
 from src.schemas.user import UserDTO
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    hashed_password: str = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    return hashed_password
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    is_password_correct = bcrypt.checkpw(
+        plain_password.encode(),
+        hashed_password.encode(),
+    )
+    return is_password_correct
 
 def create_access_token(
     user: UserDTO,
     expires_delta_minutes: int=config.auth.access_token_expire_minutes,
 ) -> str:
     to_encode = {
-        "sub": user.id,
+        "sub": str(user.id),
     }
     expire = datetime.now(UTC) + timedelta(minutes=expires_delta_minutes)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(
+    token = jwt.encode(
         to_encode,
         config.auth.secret_key.get_secret_value(),
         algorithm=config.auth.algorithm,
     )
 
-    return encoded_jwt
+    return token
+
+
+def verify_token(token: str) -> TokenPayload:
+    payload = jwt.decode(
+        token,
+        config.auth.secret_key.get_secret_value(),
+        algorithms=[config.auth.algorithm],
+    )
+
+    user_id = payload.get("sub")
+    return TokenPayload(user_id=user_id)
