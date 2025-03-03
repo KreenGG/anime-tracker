@@ -1,14 +1,31 @@
 version: '3.9'
 
 services:
-  db:
+  main-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    # expose:
+    #   - "8000"
+    depends_on:
+      - postgres
+    # <путь в системе>:<путь в контейнере>
+    volumes:
+      - ./src:/app/src
+      - .env:/app/.env
+  postgres:
     image: postgres:latest
     container_name: game-market-db
     restart: unless-stopped
     env_file:
       - .env
     ports:
-      - "54321:5432"
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
 
