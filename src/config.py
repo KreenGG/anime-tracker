@@ -8,6 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv(find_dotenv(".env"))
 
+
 class DatabaseConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
@@ -33,12 +34,14 @@ class DatabaseConfig(BaseSettings):
         )
         return dsn.unicode_string()
 
+
 class AuthConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="AUTH_")
 
     secret_key: SecretStr
     access_token_expire_minutes: int
     algorithm: str
+
 
 class Config(BaseSettings):
     db: DatabaseConfig = DatabaseConfig()

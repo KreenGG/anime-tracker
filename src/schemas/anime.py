@@ -10,7 +10,7 @@ class Anime(BaseModel):
     episodes: int | None
     episodes_aired: int | None
     duration: int | None
-    poster: str | None # Буду брать тупо jpeg
+    poster: str | None  # Буду брать тупо jpeg
     # Жанры можно прикрутить позже
     description: str | None
     description_html: str | None

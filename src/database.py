@@ -12,7 +12,8 @@ DATABASE_PARAMS = {
 }
 
 engine = create_async_engine(
-    SQLALCHEMY_DATABASE_URL, **DATABASE_PARAMS,
+    SQLALCHEMY_DATABASE_URL,
+    **DATABASE_PARAMS,
 )
 
 

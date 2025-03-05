@@ -11,6 +11,7 @@ LOG_FILE_PATH = Path(LOG_DIR) / "app.log"
 LOGGING_LEVEL = logging.DEBUG
 LOGGING_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
+
 def setup_logging() -> None:
     logging.basicConfig(level=LOGGING_LEVEL, format=LOGGING_FORMAT)
 

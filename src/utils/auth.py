@@ -12,6 +12,7 @@ def get_password_hash(password: str) -> str:
     hashed_password: str = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     return hashed_password
 
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     is_password_correct = bcrypt.checkpw(
         plain_password.encode(),
@@ -19,9 +20,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     )
     return is_password_correct
 
+
 def create_access_token(
     user: User,
-    expires_delta_minutes: int=config.auth.access_token_expire_minutes,
+    expires_delta_minutes: int = config.auth.access_token_expire_minutes,
 ) -> str:
     to_encode = {
         "sub": str(user.id),

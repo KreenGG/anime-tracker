@@ -15,6 +15,7 @@ from src.utils.auth import (
 
 logger = logging.getLogger(__name__)
 
+
 async def create_user(
     user_data: UserRegister,
     session: AsyncSession,
@@ -35,6 +36,7 @@ async def create_user(
     await session.commit()
     logger.debug("User %s created", user.email)
 
+
 async def authenticate_user(
     user_data: UserLogin,
     session: AsyncSession,
@@ -53,6 +55,7 @@ async def authenticate_user(
     logger.debug("Token for user %s created", user.email)
 
     return token
+
 
 async def get_user_by_id(
     user_id: int,

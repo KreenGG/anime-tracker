@@ -14,7 +14,7 @@ class Anime(Base):
     episodes: Mapped[int] = mapped_column(nullable=True)
     episodes_aired: Mapped[int] = mapped_column(nullable=True)
     duration: Mapped[int] = mapped_column(nullable=True)
-    poster: Mapped[str] = mapped_column(nullable=True) # Буду брать тупо jpeg
+    poster: Mapped[str] = mapped_column(nullable=True)  # Буду брать тупо jpeg
     # Жанры можно прикрутить позже
     description: Mapped[str] = mapped_column(nullable=True)
     description_html: Mapped[str] = mapped_column(nullable=True)

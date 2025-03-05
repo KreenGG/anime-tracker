@@ -6,4 +6,3 @@ router = APIRouter(
     prefix="/api",
 )
 router.include_router(api_router)
-

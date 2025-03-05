@@ -17,6 +17,7 @@ router = APIRouter(
     tags=["Anime"],
 )
 
+
 @router.get(
     "",
     responses={
@@ -26,7 +27,7 @@ router = APIRouter(
 )
 async def get_animes(
     session: Annotated[AsyncSession, Depends(get_session)],
-    offset:  Annotated[int | None, Query(ge=0)] = None,
+    offset: Annotated[int | None, Query(ge=0)] = None,
     limit: Annotated[int | None, Query(ge=0)] = None,
 ):
     anime_service = AnimeService()
@@ -37,6 +38,7 @@ async def get_animes(
         raise NotFoundError
 
     return ApiResponse(data=anime_list)
+
 
 @router.get(
     "/{id}",

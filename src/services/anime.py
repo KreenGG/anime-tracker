@@ -8,6 +8,7 @@ from src.schemas.anime import Anime
 
 logger = logging.getLogger(__name__)
 
+
 class AnimeService:
     async def get_all(
         self,
@@ -24,7 +25,7 @@ class AnimeService:
         return animes
 
     async def get_single(self, session: AsyncSession, id: int) -> Anime | None:
-        stmt = select(AnimeModel).where(AnimeModel.id==id)
+        stmt = select(AnimeModel).where(AnimeModel.id == id)
         result = await session.execute(stmt)
         anime = result.scalars().first()
         if not anime:

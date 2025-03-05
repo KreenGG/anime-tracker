@@ -1,10 +1,11 @@
 """user model
 
 Revision ID: bc3a5e6da1ac
-Revises: 
+Revises:
 Create Date: 2025-02-18 23:07:46.490749
 
 """
+
 from collections.abc import Sequence
 
 # revision identifiers, used by Alembic.

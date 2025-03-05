@@ -29,13 +29,14 @@ app.add_middleware(
 
 app.include_router(router)
 
+
 @app.get("/test_with_auth")
 async def test_auth(
     user: Annotated[User, Depends(get_current_user)],
 ):
     return user
 
+
 @app.get("/test_without_auth")
-async def test_without_auth(
-):
+async def test_without_auth():
     return "Free endpoint"

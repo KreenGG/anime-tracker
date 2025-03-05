@@ -15,15 +15,13 @@ from src.services.user import authenticate_user, create_user
 router = APIRouter(tags=["Auth"])
 
 
-
 @router.post(
     "/register",
     responses={
         status.HTTP_200_OK: {
             "description": "Succesful user registration",
         },
-        status.HTTP_400_BAD_REQUEST:{
-        },
+        status.HTTP_400_BAD_REQUEST: {},
     },
 )
 async def register(
@@ -39,6 +37,7 @@ async def register(
         ) from AuthError
 
     return {"success": True}
+
 
 @router.post("/login", response_model=Token)
 async def login(
@@ -56,7 +55,6 @@ async def login(
             status.HTTP_400_BAD_REQUEST,
             e.detail,
         ) from AuthError
-
 
     return {
         "access_token": token,
