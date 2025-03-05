@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 
 
-class UserDTO(BaseModel):
+class User(BaseModel):
     id: int
     email: EmailStr
     hashed_password: str

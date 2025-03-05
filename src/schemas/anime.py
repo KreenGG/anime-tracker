@@ -3,15 +3,18 @@ from pydantic import BaseModel
 
 class Anime(BaseModel):
     id: int
-    name: str
-    russian: str
-    english: str
-    japanese: str
-    episodes: int
-    episodes_aired: int
-    duration: int
-    poster: str # Буду брать тупо jpeg
+    name: str | None
+    russian: str | None
+    english: str | None
+    japanese: str | None
+    episodes: int | None
+    episodes_aired: int | None
+    duration: int | None
+    poster: str | None # Буду брать тупо jpeg
     # Жанры можно прикрутить позже
-    description: str
-    description_html: str
-    description_source: str
+    description: str | None
+    description_html: str | None
+    description_source: str | None
+
+    class Config:
+        from_attributes = True

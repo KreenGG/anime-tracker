@@ -5,7 +5,7 @@ import jwt
 
 from src.config import config
 from src.schemas.auth import TokenPayload
-from src.schemas.user import UserDTO
+from src.schemas.user import User
 
 
 def get_password_hash(password: str) -> str:
@@ -20,7 +20,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return is_password_correct
 
 def create_access_token(
-    user: UserDTO,
+    user: User,
     expires_delta_minutes: int=config.auth.access_token_expire_minutes,
 ) -> str:
     to_encode = {
