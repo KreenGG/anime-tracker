@@ -19,6 +19,7 @@ services:
     volumes:
       - ./src:/app/src
       - .env:/app/.env
+      - ./logs:/app/logs
   postgres:
     image: postgres:latest
     container_name: anime-tracker-db
