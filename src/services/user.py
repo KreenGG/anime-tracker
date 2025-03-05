@@ -43,18 +43,21 @@ async def authenticate_user(
 ) -> Token:
     stmt = select(UserModel).where(UserModel.email == user_data.email)
     result = await session.execute(stmt)
-    user = result.scalars().first()
-    if not user:
+    user_db = result.scalars().first()
+    if not user_db:
         raise InvalidCredentialsError
-    if not verify_password(user_data.password, user.hashed_password):
+    if not verify_password(user_data.password, user_db.hashed_password):
         raise InvalidCredentialsError
 
-    user = User.model_validate(user)
+    user = User.model_validate(user_db)
     token = create_access_token(user)
 
     logger.debug("Token for user %s created", user.email)
 
-    return token
+    return Token(
+        access_token=token,
+        token_type="Bearer"
+    )
 
 
 async def get_user_by_id(
@@ -63,7 +66,7 @@ async def get_user_by_id(
 ) -> User:
     stmt = select(UserModel).where(UserModel.id == user_id)
     result = await session.execute(stmt)
-    user = result.scalars().first()
-    user = User.model_validate(user)
+    user_db = result.scalars().first()
+    user = User.model_validate(user_db)
 
     return user

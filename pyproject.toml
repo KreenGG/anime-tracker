@@ -1,5 +1,5 @@
 [project]
-name = "game-market"
+name = "anime-tracker"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -9,6 +9,8 @@ dependencies = [
     "asyncpg>=0.30.0",
     "bcrypt>=4.2.1",
     "fastapi[standard]>=0.115.8",
+    "httpx>=0.28.1",
+    "psycopg>=3.2.5",
     "pydantic-settings>=2.7.1",
     "pydantic[email]>=2.10.6",
     "pyjwt>=2.10.1",
@@ -19,6 +21,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "mypy>=1.15.0",
     "ruff>=0.9.6",
 ]
 

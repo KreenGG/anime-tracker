@@ -29,7 +29,8 @@ def create_access_token(
         "sub": str(user.id),
     }
     expire = datetime.now(UTC) + timedelta(minutes=expires_delta_minutes)
-    to_encode.update({"exp": expire})
+    expire_timestamp = str(expire.timestamp())
+    to_encode.update({"exp": expire_timestamp})
     token = jwt.encode(
         to_encode,
         config.auth.secret_key.get_secret_value(),

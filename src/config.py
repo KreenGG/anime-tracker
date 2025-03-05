@@ -1,3 +1,5 @@
+import secrets
+
 from dotenv import find_dotenv, load_dotenv
 from pydantic import (
     Field,
@@ -12,11 +14,11 @@ load_dotenv(find_dotenv(".env"))
 class DatabaseConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
-    username: str = Field(alias="POSTGRES_USER")
-    password: SecretStr
-    host: str = "localhost"
-    port: int = 5432
-    database: str = Field(alias="POSTGRES_DB")
+    username: str | None = Field(alias="POSTGRES_USER", default=None)
+    password: SecretStr = SecretStr(secrets.token_urlsafe())
+    host: str | None = None
+    port: int | None = None
+    database: str | None = Field(alias="POSTGRES_DB", default=None)
 
     driver: str = "asyncpg"
     database_system: str = "postgresql"
@@ -38,9 +40,9 @@ class DatabaseConfig(BaseSettings):
 class AuthConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="AUTH_")
 
-    secret_key: SecretStr
-    access_token_expire_minutes: int
-    algorithm: str
+    secret_key: SecretStr = SecretStr(secrets.token_urlsafe())
+    access_token_expire_minutes: int = 30
+    algorithm: str = "HS256"
 
 
 class Config(BaseSettings):
