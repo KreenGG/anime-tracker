@@ -28,7 +28,7 @@ router = APIRouter(
 async def get_animes(
     session: Annotated[AsyncSession, Depends(get_session)],
     offset: Annotated[int | None, Query(ge=0)] = None,
-    limit: Annotated[int | None, Query(ge=0)] = None,
+    limit: Annotated[int | None, Query(ge=0, le=100)] = None,
 ):
     anime_service = AnimeService()
     anime_list = await anime_service.get_all(session, offset, limit)
