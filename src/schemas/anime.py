@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class Anime(BaseModel):
+    # TODO: добавить валидацию полей к примеру duration>0
     id: int
     name: str | None
     russian: str | None

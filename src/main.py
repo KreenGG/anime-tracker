@@ -10,7 +10,9 @@ from src.schemas.user import User
 
 setup_logging()
 
-app = FastAPI()
+app = FastAPI(
+    title="Anime Tracker",
+)
 
 origins = [
     "http://localhost",
