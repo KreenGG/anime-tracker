@@ -54,10 +54,7 @@ async def authenticate_user(
 
     logger.debug("Token for user %s created", user.email)
 
-    return Token(
-        access_token=token,
-        token_type="Bearer"
-    )
+    return Token(access_token=token, token_type="Bearer")
 
 
 async def get_user_by_id(

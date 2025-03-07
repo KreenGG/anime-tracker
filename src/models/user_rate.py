@@ -26,10 +26,10 @@ class UserRate(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False, unique=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     user: Mapped["User"] = relationship(back_populates="user_rates")
 
-    anime_id: Mapped[int] = mapped_column(ForeignKey("anime.id"))
+    anime_id: Mapped[int] = mapped_column(ForeignKey("anime.id"), nullable=False)
     # ? Не знаю как это влияет на запросы, возможно это стоит убрать
     # ? Оно может брать все отзывы для аниме, и если их будут тысячи,
     # ? может работать медленно
@@ -39,7 +39,7 @@ class UserRate(Base):
     status: Mapped["Status"] = mapped_column(default=Status.planned, nullable=False)
     rewatches: Mapped[int] = mapped_column(default=0, nullable=False)
     episodes: Mapped[int] = mapped_column(default=0, nullable=False)
-    text: Mapped[str| None]
+    text: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.now(UTC),
