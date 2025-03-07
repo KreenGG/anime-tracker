@@ -23,6 +23,12 @@ dev = [
     "ruff>=0.9.6",
 ]
 
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    "alembic"
+]
+
 [tool.ruff.lint]
 select = [
     # https://docs.astral.sh/ruff/rules/#pyflakes-f
@@ -47,6 +53,3 @@ ignore = [
 [tool.ruff.format]
 # Use `\n` line endings for all files
 line-ending = "lf"
-
-[tool.ruff.lint.per-file-ignores]
-"src/alembic/*" = ["ALL"]   # alembic folder
