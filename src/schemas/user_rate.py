@@ -1,18 +1,11 @@
 from datetime import datetime
-from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from src.models.user_rate import Status
 
-class Status(Enum):
-    planned = "planned"
-    watching = "watching"
-    completed = "completed"
-    on_hold = "on_hold"
-    dropped = "dropped"
-    rewatching = "rewatching"
 
-class UserRate(BaseModel):
+class UserRateRead(BaseModel):
     id: int
     user_id: int
     anime_id: int

@@ -1,6 +1,11 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
+
+if TYPE_CHECKING:
+    from src.models.user_rate import UserRate
 
 
 class Anime(Base):
@@ -19,3 +24,6 @@ class Anime(Base):
     description: Mapped[str] = mapped_column(nullable=True)
     description_html: Mapped[str] = mapped_column(nullable=True)
     description_source: Mapped[str] = mapped_column(nullable=True)
+
+    # relations
+    user_rates: Mapped[list["UserRate"]] = relationship(back_populates="anime")
