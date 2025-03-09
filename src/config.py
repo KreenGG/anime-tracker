@@ -1,4 +1,5 @@
 import secrets
+from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
 from pydantic import (
@@ -8,7 +9,8 @@ from pydantic import (
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-load_dotenv(find_dotenv(".env"))
+BASE_DIRECTORY = Path(__file__).resolve().parent.parent
+load_dotenv(find_dotenv(BASE_DIRECTORY / ".env"))
 
 
 class DatabaseConfig(BaseSettings):
