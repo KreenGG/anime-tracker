@@ -27,11 +27,11 @@ router = APIRouter(
 )
 async def get_animes(
     session: Annotated[AsyncSession, Depends(get_session)],
-    offset: Annotated[int | None, Query(ge=0)] = None,
-    limit: Annotated[int | None, Query(ge=0, le=100)] = None,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=0, le=100)] = 50,
 ):
-    anime_service = AnimeService()
-    anime_list = await anime_service.get_all(session, offset, limit)
+    anime_service = AnimeService(session)
+    anime_list = await anime_service.get_all(offset, limit)
 
     if not anime_list:
         logger.debug("Animes not found (offset=%d, limit=%d)", offset, limit)
@@ -51,8 +51,8 @@ async def get_single_anime(
     session: Annotated[AsyncSession, Depends(get_session)],
     id: int,
 ):
-    anime_service = AnimeService()
-    anime = await anime_service.get_single(session, id)
+    anime_service = AnimeService(session)
+    anime = await anime_service.get_single_by_id(id)
 
     if not anime:
         logger.debug("Anime not found (id=%d)", id)
