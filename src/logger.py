@@ -9,7 +9,7 @@ if not Path.exists(LOG_DIR):
 LOG_FILE_PATH = Path(LOG_DIR) / "app.log"
 
 LOGGING_LEVEL = logging.DEBUG
-LOGGING_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+LOGGING_FORMAT = "%(asctime)s - %(name)s:%(lineno)d - %(levelname)s - %(message)s"
 
 
 def setup_logging() -> None:
