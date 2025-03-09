@@ -1,9 +1,12 @@
+import logging
 from collections.abc import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.anime import Anime
+
+logger = logging.getLogger(__name__)
 
 
 class AnimeDAO:
@@ -35,6 +38,7 @@ class AnimeDAO:
     #     return anime_db
 
     async def get_single(self, **kwargs) -> Anime | None:
+        logger.debug("Getting user by: %s", kwargs)
         stmt = select(Anime).filter_by(**kwargs)
         result = await self.session.execute(stmt)
         anime_db = result.scalars().first()
