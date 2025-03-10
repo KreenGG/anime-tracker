@@ -28,15 +28,6 @@ class AnimeDAO:
             return None
         return animes
 
-    # FIXME возможно не пригодится
-    # async def get_single_by_id(self, id: int) -> Anime | None:
-    #     stmt = select(Anime).where(Anime.id == id)
-    #     result = await self.session.execute(stmt)
-    #     anime_db = result.scalars().first()
-    #     if not anime_db:
-    #         return None
-    #     return anime_db
-
     async def get_single(self, **kwargs) -> Anime | None:
         logger.debug("Getting user by: %s", kwargs)
         stmt = select(Anime).filter_by(**kwargs)
