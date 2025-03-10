@@ -19,8 +19,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "faker>=37.0.0",
+    "httpx>=0.28.1",
     "mypy>=1.15.0",
     "pre-commit>=4.1.0",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.25.3",
     "ruff>=0.9.6",
 ]
 
@@ -54,3 +58,9 @@ ignore = [
 [tool.ruff.format]
 # Use `\n` line endings for all files
 line-ending = "lf"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning", # Pydantic deprecation
+]
+asyncio_mode = 'auto'

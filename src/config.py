@@ -10,7 +10,7 @@ from pydantic import (
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIRECTORY = Path(__file__).resolve().parent.parent
-load_dotenv(find_dotenv(BASE_DIRECTORY / ".env"))
+load_dotenv(find_dotenv(str(BASE_DIRECTORY / ".env")))
 
 
 class DatabaseConfig(BaseSettings):
