@@ -13,8 +13,8 @@ from src.services.anime import AnimeService
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/anime",
-    tags=["Anime"],
+    prefix="/animes",
+    tags=["Animes"],
 )
 
 
