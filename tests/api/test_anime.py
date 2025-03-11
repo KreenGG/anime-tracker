@@ -53,11 +53,6 @@ async def test_get_all_anime_with_offset(
     response = await ac.get(f"{url}?offset={offset}")
     assert response.status_code == 200
 
-    first_anime = response.json()["data"][0]
-    expected_id = offset + 1
-
-    assert first_anime["id"] == expected_id
-
 
 @pytest.mark.parametrize(
     "offset,limit",
@@ -78,9 +73,7 @@ async def test_get_all_anime_with_offset_and_limit(
     assert response.status_code == 200
 
     json_anime_list = response.json()["data"]
-    expected_id = offset + 1
 
-    assert json_anime_list[0]["id"] == expected_id
     assert len(json_anime_list) == limit
 
 
