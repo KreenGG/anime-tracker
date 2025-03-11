@@ -26,10 +26,15 @@ class UserRate(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False, unique=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     user: Mapped["User"] = relationship(back_populates="user_rates")
 
-    anime_id: Mapped[int] = mapped_column(ForeignKey("anime.id"), nullable=False)
+    anime_id: Mapped[int] = mapped_column(
+        ForeignKey("anime.id", ondelete="CASCADE"), nullable=False
+    )
     # ? Не знаю как это влияет на запросы, возможно это стоит убрать
     # ? Оно может брать все отзывы для аниме, и если их будут тысячи,
     # ? может работать медленно

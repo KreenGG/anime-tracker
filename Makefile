@@ -1,4 +1,5 @@
 DC = docker compose
+MAIN_APP_CONTAINER_NAME= anime-tracker-main-app
 
 run:
 	${DC} up -d
@@ -7,7 +8,11 @@ down:
 	${DC} down
 
 migrations:
-	docker exec -it anime-tracker-main-app alembic upgrade head
+	docker exec -it ${MAIN_APP_CONTAINER_NAME} alembic upgrade head
+
+# make revision --text="your text"
+revision:
+	docker exec -it ${MAIN_APP_CONTAINER_NAME} alembic revision --autogenerate -m "$(text)"
 
 # Tests
 test-db:
