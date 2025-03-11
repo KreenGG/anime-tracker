@@ -1,4 +1,5 @@
 import pytest
+from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,8 +8,10 @@ from tests.utils.anime import create_anime
 
 async def test_get_all_anime(
     ac: AsyncClient,
+    app: FastAPI,
 ) -> None:
-    response = await ac.get("/api/anime")
+    url = app.url_path_for("get_animes")
+    response = await ac.get(url)
 
     assert response.status_code == 200
 
@@ -20,9 +23,11 @@ async def test_get_all_anime(
 @pytest.mark.parametrize("limit", [10, 20])
 async def test_get_all_anime_with_limit(
     ac: AsyncClient,
+    app: FastAPI,
     limit: int,
 ) -> None:
-    response = await ac.get(f"/api/anime?limit={limit}")
+    url = app.url_path_for("get_animes")
+    response = await ac.get(f"{url}?limit={limit}")
 
     assert response.status_code == 200
     assert len(response.json()["data"]) == limit
@@ -30,8 +35,10 @@ async def test_get_all_anime_with_limit(
 
 async def test_get_all_anime_with_limit_zero(
     ac: AsyncClient,
+    app: FastAPI,
 ) -> None:
-    response = await ac.get("/api/anime?limit=0")
+    url = app.url_path_for("get_animes")
+    response = await ac.get(f"{url}?limit=0")
 
     assert response.status_code == 404
 
@@ -39,9 +46,11 @@ async def test_get_all_anime_with_limit_zero(
 @pytest.mark.parametrize("offset", [0, 10, 20])
 async def test_get_all_anime_with_offset(
     ac: AsyncClient,
+    app: FastAPI,
     offset: int,
 ) -> None:
-    response = await ac.get(f"/api/anime?offset={offset}")
+    url = app.url_path_for("get_animes")
+    response = await ac.get(f"{url}?offset={offset}")
     assert response.status_code == 200
 
     first_anime = response.json()["data"][0]
@@ -60,10 +69,12 @@ async def test_get_all_anime_with_offset(
 )
 async def test_get_all_anime_with_offset_and_limit(
     ac: AsyncClient,
+    app: FastAPI,
     offset: int,
     limit: int,
 ) -> None:
-    response = await ac.get(f"/api/anime?offset={offset}&limit={limit}")
+    url = app.url_path_for("get_animes")
+    response = await ac.get(f"{url}?offset={offset}&limit={limit}")
     assert response.status_code == 200
 
     json_anime_list = response.json()["data"]
@@ -73,9 +84,13 @@ async def test_get_all_anime_with_offset_and_limit(
     assert len(json_anime_list) == limit
 
 
-async def test_get_anime_by_id(ac: AsyncClient, db_session: AsyncSession) -> None:
+async def test_get_anime_by_id(
+    ac: AsyncClient, app: FastAPI, db_session: AsyncSession
+) -> None:
     anime = await create_anime(db_session)
-    response = await ac.get(f"/api/anime/{anime.id}")
+
+    url = app.url_path_for("get_single_anime", id=anime.id)
+    response = await ac.get(url)
 
     assert response.status_code == 200
 
@@ -94,7 +109,10 @@ async def test_get_anime_by_id(ac: AsyncClient, db_session: AsyncSession) -> Non
 
 async def test_get_anime_by_id_not_found(
     ac: AsyncClient,
+    app: FastAPI,
 ) -> None:
-    response = await ac.get("/api/anime/100000")
+    url = app.url_path_for("get_single_anime", id=100000)
+
+    response = await ac.get(url)
 
     assert response.status_code == 404
