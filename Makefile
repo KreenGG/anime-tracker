@@ -6,6 +6,9 @@ run:
 down:
 	${DC} down
 
+migrations:
+	docker exec -it anime-tracker-main-app alembic upgrade head
+
 # Tests
 test-db:
 	${DC} -f docker-compose-test.yaml up -d
