@@ -1,12 +1,9 @@
-from typing import Annotated
-
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import router
-from src.api.dependencies import get_current_user
+from src.api.dependencies import UserDep
 from src.logger import setup_logging
-from src.schemas.user import User
 
 
 def create_app():
@@ -36,7 +33,7 @@ def create_app():
 
     @app.get("/test_with_auth")
     async def test_auth(
-        user: Annotated[User, Depends(get_current_user)],
+        user: UserDep,
     ):
         return user
 

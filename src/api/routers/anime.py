@@ -1,12 +1,11 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Query, status
 
+from src.api.dependencies import SessionDep
 from src.api.exceptions import NotFoundError
 from src.api.schemas import ApiResponse, ErrorResponse
-from src.database import get_session
 from src.schemas.anime import Anime
 from src.services.anime import AnimeService
 
@@ -26,7 +25,7 @@ router = APIRouter(
     },
 )
 async def get_animes(
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: SessionDep,
     offset: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=0, le=100)] = 50,
 ):
@@ -47,7 +46,7 @@ async def get_animes(
     },
 )
 async def get_single_anime(
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: SessionDep,
     id: int,
 ):
     anime_service = AnimeService(session)

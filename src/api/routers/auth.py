@@ -2,9 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database import get_session
+from src.api.dependencies import SessionDep
 from src.exceptions.auth import (
     AuthError,
 )
@@ -26,7 +25,7 @@ router = APIRouter(tags=["Auth"])
 )
 async def register(
     user_data: UserRegister,
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: SessionDep,
 ) -> dict:
     user_service = UserService(session)
     try:
@@ -43,7 +42,7 @@ async def register(
 @router.post("/login", response_model=Token)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: SessionDep,
 ):
     user_service = UserService(session)
     user_data = UserLogin(

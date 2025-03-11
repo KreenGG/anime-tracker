@@ -14,10 +14,12 @@ from src.utils.auth import verify_token
 logger = logging.getLogger(__name__)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    session: Annotated[AsyncSession, Depends(get_session)],
+    session: SessionDep,
 ) -> User:
     user_service = UserService(session)
     try:
@@ -35,3 +37,6 @@ async def get_current_user(
         ) from e
     user = await user_service.get_user_by_id(user_id)
     return user
+
+
+UserDep = Annotated[User, Depends(get_current_user)]
