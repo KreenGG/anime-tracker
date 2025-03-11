@@ -34,7 +34,7 @@ async def get_animes(
     anime_list = await anime_service.get_all(offset, limit)
 
     if not anime_list:
-        logger.debug("Animes not found (offset=%d, limit=%d)", offset, limit)
+        logger.warning("Animes not found (offset=%d, limit=%d)", offset, limit)
         raise NotFoundError
 
     return ApiResponse(data=anime_list)

@@ -29,7 +29,7 @@ class AnimeDAO:
         return animes
 
     async def get_single(self, **kwargs) -> Anime | None:
-        logger.debug("Getting user by: %s", kwargs)
+        logger.debug("Getting anime by: %s", kwargs)
         stmt = select(Anime).filter_by(**kwargs)
         result = await self.session.execute(stmt)
         anime_db = result.scalars().first()
