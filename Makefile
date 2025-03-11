@@ -1,16 +1,14 @@
 DC = docker compose
 
-app:
-	${DC} up --build
-
-storages:
-	${DC} up -d postgres
-
-storages-test:
-	${DC} -f docker-compose-test.yaml up -d
+run:
+	${DC} up -d
 
 down:
 	${DC} down
 
-down-test:
+# Tests
+test-db:
+	${DC} -f docker-compose-test.yaml up -d
+
+test-db-down:
 	${DC} -f docker-compose-test.yaml down
