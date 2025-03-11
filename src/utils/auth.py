@@ -1,11 +1,11 @@
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import bcrypt
 import jwt
 
 from src.config import config
 from src.schemas.auth import TokenPayload
-from src.schemas.user import User
 
 
 def get_password_hash(password: str) -> str:
@@ -22,11 +22,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def create_access_token(
-    user: User,
+    subject: str | Any,
     expires_delta_minutes: int = config.auth.access_token_expire_minutes,
 ) -> str:
     to_encode = {
-        "sub": str(user.id),
+        "sub": str(subject),
     }
     expire = datetime.now(UTC) + timedelta(minutes=expires_delta_minutes)
     expire_timestamp = str(int(expire.timestamp()))
@@ -48,5 +48,5 @@ def verify_token(token: str) -> TokenPayload:
         algorithms=[config.auth.algorithm],
     )
 
-    user_id = payload.get("sub")
-    return TokenPayload(user_id=user_id)
+    sub = payload.get("sub")
+    return TokenPayload(sub=sub)

@@ -51,7 +51,7 @@ class UserService:
             raise InvalidCredentialsError
 
         user = User.model_validate(user_db)
-        token = create_access_token(user)
+        token = create_access_token(user.id)
 
         logger.debug("Token for user %s created", user.email)
 

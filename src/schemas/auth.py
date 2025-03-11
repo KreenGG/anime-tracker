@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class TokenPayload(BaseModel):
-    user_id: int
+    sub: str | None = None
 
 
 class Token(BaseModel):
