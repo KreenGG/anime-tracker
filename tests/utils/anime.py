@@ -1,4 +1,3 @@
-import pytest
 from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,13 +5,12 @@ from src.models.anime import Anime
 
 faker = Faker()
 
-ROW_AMOUNT = 100
 
-
-@pytest.fixture(scope="module")
-async def filled_anime_db(db_session: AsyncSession):
+async def create_bunch_anime(
+    db_session: AsyncSession, amount: int = 100
+) -> list[Anime]:
     anime_list = []
-    for i in range(ROW_AMOUNT):
+    for i in range(amount):
         anime_list.append(
             Anime(
                 name=faker.name(),
@@ -30,3 +28,4 @@ async def filled_anime_db(db_session: AsyncSession):
         )
     db_session.add_all(anime_list)
     await db_session.commit()
+    return anime_list

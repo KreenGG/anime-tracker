@@ -22,6 +22,10 @@ async def get_current_user(
     user_service = UserService(session)
     try:
         payload = verify_token(token)
+        if payload.sub:
+            user_id = int(payload.sub)
+        else:
+            raise InvalidTokenError
     except InvalidTokenError as e:
         logger.exception("Could not validate credentials")
         raise HTTPException(
@@ -29,5 +33,5 @@ async def get_current_user(
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         ) from e
-    user = await user_service.get_user_by_id(payload.user_id)
+    user = await user_service.get_user_by_id(user_id)
     return user

@@ -7,14 +7,13 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from config import test_config
 from src.database import Base, get_session
 from src.main import create_app
+from tests.utils.anime import create_bunch_anime
+
+from .config import test_config
 
 logger = logging.getLogger(__name__)
-
-# Подключаю фикстуры из стороннего пакета
-pytest_plugins = ("mocks",)
 
 SQLALCHEMY_DATABASE_URL = test_config.url
 logger.debug("Testing database url=%s", SQLALCHEMY_DATABASE_URL)
@@ -40,6 +39,11 @@ async def create_tables():
     yield
 
 
+@pytest.fixture(scope="session", autouse=True)
+async def fill_tables(db_session):
+    await create_bunch_anime(db_session)
+
+
 @pytest.fixture(scope="session")
 async def db_session():
     async with async_session_maker() as session:
@@ -54,12 +58,12 @@ async def app(db_session) -> FastAPI:
         finally:
             await db_session.close()
 
-    main_app = create_app()
-    main_app.dependency_overrides[get_session] = override_get_db
-    return main_app
+    app = create_app()
+    app.dependency_overrides[get_session] = override_get_db
+    return app
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 async def ac(app) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
