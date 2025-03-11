@@ -29,3 +29,24 @@ async def create_bunch_anime(
     db_session.add_all(anime_list)
     await db_session.commit()
     return anime_list
+
+
+async def create_anime(db_session: AsyncSession) -> Anime:
+    anime = Anime(
+        name=faker.name(),
+        russian=faker.name(),
+        english=faker.name(),
+        japanese=faker.name(),
+        episodes=faker.random_int(min=1, max=1200),
+        episodes_aired=faker.random_int(min=10, max=120),
+        duration=faker.random_int(min=10, max=120),
+        poster=faker.image_url(),
+        description=faker.text(),
+        description_html=faker.text(),
+        description_source=faker.url(),
+    )
+
+    db_session.add(anime)
+    await db_session.commit()
+    await db_session.refresh(anime)
+    return anime
