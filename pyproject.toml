@@ -64,3 +64,6 @@ pythonpath = ["."]
 filterwarnings = ["ignore::DeprecationWarning", # Pydantic deprecation
 ]
 asyncio_mode = 'auto'
+
+[tool.mypy]
+exclude = "alembic/*"
