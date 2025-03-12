@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.user import User
@@ -26,3 +26,11 @@ class UserDAO:
 
     async def create(self, user: User) -> None:
         self.session.add(user)
+
+    async def is_already_exists(self, email: str, nickname: str) -> bool:
+        stmt = select(User).filter(or_(User.email == email, User.nickname == nickname))
+        result = await self.session.execute(stmt)
+        user = result.scalars().first()
+        if user:
+            return True
+        return False

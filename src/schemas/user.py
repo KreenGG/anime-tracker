@@ -1,13 +1,17 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
-class User(BaseModel):
+class UserGet(BaseModel):
     id: int
     email: EmailStr
-    hashed_password: str
+    nickname: str
 
     class Config:
         from_attributes = True
+
+
+class UserDTO(UserGet):
+    hashed_password: str
 
 
 class UserLogin(BaseModel):
@@ -15,12 +19,5 @@ class UserLogin(BaseModel):
     password: str
 
 
-class UserRegister(UserLogin): ...
-
-
-class UserGet(BaseModel):
-    id: int
-    email: EmailStr
-
-    class Config:
-        from_attributes = True
+class UserRegister(UserLogin):
+    nickname: str = Field(min_length=3, max_length=32)

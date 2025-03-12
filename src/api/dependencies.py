@@ -7,7 +7,7 @@ from jwt import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_session
-from src.schemas.user import User
+from src.schemas.user import UserDTO
 from src.services.user import UserService
 from src.utils.auth import verify_token
 
@@ -20,7 +20,7 @@ SessionDep = Annotated[AsyncSession, Depends(get_session)]
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: SessionDep,
-) -> User:
+) -> UserDTO:
     user_service = UserService(session)
     try:
         payload = verify_token(token)
@@ -39,4 +39,4 @@ async def get_current_user(
     return user
 
 
-UserDep = Annotated[User, Depends(get_current_user)]
+UserDep = Annotated[UserDTO, Depends(get_current_user)]
