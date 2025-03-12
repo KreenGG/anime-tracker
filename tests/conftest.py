@@ -12,6 +12,7 @@ from src.main import create_app
 from tests.utils.anime import create_bunch_anime
 
 from .config import test_config
+from .utils.user import TEST_USER, create_bunch_users
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +41,10 @@ async def create_tables():
 
 
 @pytest.fixture(scope="session", autouse=True)
-async def fill_tables(db_session):
-    await create_bunch_anime(db_session)
+async def fill_tables():
+    async with async_session_maker() as session:
+        await create_bunch_anime(session)
+        await create_bunch_users(session)
 
 
 @pytest.fixture(scope="session")
@@ -68,4 +71,30 @@ async def ac(app) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
+        yield ac
+
+
+@pytest.fixture
+async def auth_ac(app: FastAPI):
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        url = app.url_path_for("login")
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        response = await ac.post(
+            url,
+            data={
+                "grant_type": "password",
+                "username": TEST_USER.email,
+                "password": "test",
+                "client_id": "string",
+                "client_secret": "string",
+            },
+            headers=headers,
+        )
+
+        token = "Bearer " + str(response.json()["access_token"])
+        ac.headers["Authorization"] = token
+
         yield ac
