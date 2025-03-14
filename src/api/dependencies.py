@@ -15,30 +15,35 @@ from src.services.user import UserService
 from src.utils.auth import verify_token
 
 logger = logging.getLogger(__name__)
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
+
+UnauthorizedError = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail=[{"msg": "Could not validate credentials"}],
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
 
 async def get_current_user(
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: SessionDep,
 ) -> UserDTO:
-    user_service = UserService(session)
+    if not token:
+        logger.warning("Token does not provided")
+        raise UnauthorizedError
 
+    user_service = UserService(session)
     try:
         payload = verify_token(token.credentials)
         if payload.sub:
             user_id = int(payload.sub)
         else:
             raise InvalidTokenError
-    except InvalidTokenError as e:
+    except InvalidTokenError:
         logger.exception("Could not validate credentials")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from e
+        raise UnauthorizedError
     user = await user_service.get_user_by_id(user_id)
     return user
 

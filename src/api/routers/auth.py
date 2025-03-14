@@ -13,12 +13,6 @@ router = APIRouter(tags=["Auth"])
 
 @router.post(
     "/register",
-    responses={
-        status.HTTP_200_OK: {
-            "description": "Succesful user registration",
-        },
-        status.HTTP_400_BAD_REQUEST: {},
-    },
 )
 async def register(
     user_data: UserRegister,
@@ -30,7 +24,7 @@ async def register(
     except AuthError as e:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST,
-            e.detail,
+            [{"msg": e.detail}],
         ) from AuthError
 
     return {"success": True}
@@ -47,7 +41,7 @@ async def login(
     except AuthError as e:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
-            e.detail,
+            [{"msg": e.detail}],
         ) from AuthError
 
     return token

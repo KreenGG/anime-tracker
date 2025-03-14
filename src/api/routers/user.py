@@ -1,9 +1,8 @@
 import logging
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 
 from src.api.dependencies import SessionDep, UserDep
-from src.api.schemas import ErrorResponse
 from src.schemas.user import UserGet
 from src.services.user import UserService
 
@@ -19,9 +18,6 @@ router = APIRouter(
     "/whoami",
     description="Show current user info",
     response_model=UserGet,
-    responses={
-        status.HTTP_401_UNAUTHORIZED: {"model": ErrorResponse},
-    },
 )
 async def get_current_user(
     session: SessionDep,

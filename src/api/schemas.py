@@ -9,5 +9,13 @@ class ApiResponse(BaseModel, Generic[ResponseType]):
     data: ResponseType | dict[str, Any] | None = Field(default_factory=dict[str, Any])
 
 
+class ErrorMessage(BaseModel):
+    msg: str
+
+
 class ErrorResponse(BaseModel):
-    detail: str
+    detail: list[ErrorMessage] | None
+
+
+# class ErrorResponse(BaseModel):
+#     detail: str
