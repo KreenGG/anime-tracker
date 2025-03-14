@@ -80,21 +80,18 @@ async def auth_ac(app: FastAPI):
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         url = app.url_path_for("login")
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
         response = await ac.post(
             url,
-            data={
-                "grant_type": "password",
-                "username": TEST_USER.email,
+            json={
+                "email": TEST_USER.email,
                 "password": "test",
-                "client_id": "string",
-                "client_secret": "string",
             },
-            headers=headers,
         )
 
-        token = "Bearer " + str(response.json()["access_token"])
-        ac.headers["Authorization"] = token
+        access_token = str(response.json()["access_token"])
+        assert access_token
+        authorization = "Bearer " + access_token
+        ac.headers["Authorization"] = authorization
 
         yield ac
