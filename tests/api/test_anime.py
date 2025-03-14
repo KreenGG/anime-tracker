@@ -87,7 +87,7 @@ async def test_get_anime_by_id(
 
     assert response.status_code == 200
 
-    anime_json = response.json()["data"]
+    anime_json = response.json()
 
     assert anime_json["id"] == anime.id
     assert anime_json["name"] == anime.name
