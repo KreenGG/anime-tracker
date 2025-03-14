@@ -2,7 +2,10 @@ import logging
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 from jwt import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,18 +15,19 @@ from src.services.user import UserService
 from src.utils.auth import verify_token
 
 logger = logging.getLogger(__name__)
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
+security = HTTPBearer()
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: SessionDep,
 ) -> UserDTO:
     user_service = UserService(session)
+
     try:
-        payload = verify_token(token)
+        payload = verify_token(token.credentials)
         if payload.sub:
             user_id = int(payload.sub)
         else:

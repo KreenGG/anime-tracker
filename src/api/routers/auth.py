@@ -1,8 +1,4 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import ValidationError
+from fastapi import APIRouter, HTTPException, status
 
 from src.api.dependencies import SessionDep
 from src.exceptions.auth import (
@@ -42,24 +38,16 @@ async def register(
 
 @router.post("/login", response_model=Token)
 async def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    user_in: UserLogin,
     session: SessionDep,
 ):
     user_service = UserService(session)
     try:
-        user_data = UserLogin(
-            email=form_data.username,
-            password=form_data.password,
-        )
-        token = await user_service.authenticate_user(user_data)
+        token = await user_service.authenticate_user(user_in)
     except AuthError as e:
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED,
             e.detail,
-        ) from AuthError
-    except ValidationError:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
         ) from AuthError
 
     return token
