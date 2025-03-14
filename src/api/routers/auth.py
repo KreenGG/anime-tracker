@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import ValidationError
 
 from src.api.dependencies import SessionDep
+from src.api.exceptions import BadRequest, UnauthorizedError
 from src.exceptions.auth import (
     AuthError,
 )
@@ -52,14 +53,9 @@ async def login(
             password=form_data.password,
         )
         token = await user_service.authenticate_user(user_data)
-    except AuthError as e:
-        raise HTTPException(
-            status.HTTP_401_UNAUTHORIZED,
-            e.detail,
-        ) from AuthError
+    except AuthError:
+        raise UnauthorizedError from AuthError
     except ValidationError:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-        ) from AuthError
+        raise BadRequest from AuthError
 
     return token
