@@ -28,7 +28,7 @@ class AnimeDAO:
             return None
         return animes
 
-    async def get_single(self, **kwargs) -> Anime | None:
+    async def get_single_or_none(self, **kwargs) -> Anime | None:
         logger.debug("Getting anime by: %s", kwargs)
         stmt = select(Anime).filter_by(**kwargs)
         result = await self.session.execute(stmt)

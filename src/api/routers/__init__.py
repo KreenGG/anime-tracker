@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from fastapi.responses import ORJSONResponse
 
 from src.api.schemas import ErrorResponse
 
@@ -9,12 +9,11 @@ from .user import router as users_router
 from .user_rates import router as user_rates_router
 
 router = APIRouter(
-    default_response_class=JSONResponse,
+    default_response_class=ORJSONResponse,
     responses={
         400: {"model": ErrorResponse},
         401: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
-        500: {"model": ErrorResponse},
     },
 )
 

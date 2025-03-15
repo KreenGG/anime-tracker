@@ -4,7 +4,7 @@ MAIN_APP_CONTAINER_NAME= anime-tracker-main-app
 run:
 	${DC} up -d
 
-down:
+stop:
 	${DC} down
 
 migrations:

@@ -25,7 +25,7 @@ class AnimeService:
         return animes
 
     async def get_single_by_id(self, id: int) -> Anime | None:
-        anime_db = await self.anime_dao.get_single(id=id)
+        anime_db = await self.anime_dao.get_single_or_none(id=id)
         if not anime_db:
             return None
         anime = Anime.model_validate(anime_db)

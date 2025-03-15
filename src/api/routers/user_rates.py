@@ -1,29 +1,58 @@
 import logging
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, status
 
 from src.api.dependencies import SessionDep, UserDep
-from src.api.exceptions import UnauthorizedError
-from src.api.schemas import ApiResponse
+from src.api.schemas import ApiResponse, ErrorResponse
+from src.exceptions.base import AlreadyExistsError, NotFoundError
 from src.schemas.user_rate import UserRateCreate, UserRateGet
+from src.services.user_rate import UserRateService
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/user_rates", tags=["User Rates"])
 
 
-@router.post("")
+@router.get("")
+async def get_user_rates(
+    session: SessionDep,
+    user: UserDep,
+) -> ApiResponse[list[UserRateGet]]:
+    user_rate_service = UserRateService(session)
+
+    try:
+        user_rates = await user_rate_service.get_all(user.id)
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=[{"msg": e.detail}]
+        )
+
+    return ApiResponse(data=user_rates)
+
+
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_409_CONFLICT: {"model": ErrorResponse},
+    },
+)
 async def create_user_rate(
     user_rate: UserRateCreate,
     session: SessionDep,
     user: UserDep,
 ) -> UserRateGet:
-    if user.id != user_rate.user_id:
-        logger.debug("Failed creating user rate (%d != %d)", user.id, user_rate.user_id)
-        raise UnauthorizedError
+    user_rate_service = UserRateService(session)
 
-    # user_rate_service = UserRateService()
+    try:
+        new_user_rate = await user_rate_service.create(user_rate, user)
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=[{"msg": e.detail}]
+        )
+    except AlreadyExistsError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=[{"msg": e.detail}]
+        )
 
-    # new_user_rate = user_rate_service.create()
-
-    return ApiResponse(data="")
+    return new_user_rate

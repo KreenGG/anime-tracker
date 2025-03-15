@@ -6,7 +6,6 @@ from src.models.user_rate import Status
 
 
 class UserRateCreate(BaseModel):
-    user_id: int
     anime_id: int
     status: Status
     score: int = Field(default=0, ge=0, le=10)
@@ -15,8 +14,9 @@ class UserRateCreate(BaseModel):
     text: str | None = None
 
 
-class UserRateGet(BaseModel):
+class UserRateGet(UserRateCreate):
     id: int
+    user_id: int
 
     created_at: datetime
     updated_at: datetime

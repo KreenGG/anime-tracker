@@ -5,10 +5,6 @@ BadRequest = HTTPException(
     detail=[{"msg": "Bad request"}],
 )
 
-UnauthorizedError = HTTPException(
-    status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated"
-)
-
 NotFoundError = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail=[{"msg": "Content not found"}],
