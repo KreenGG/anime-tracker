@@ -22,11 +22,16 @@ router = APIRouter(
 )
 async def get_animes(
     session: SessionDep,
+    search: Annotated[str, Query()] = "",
     offset: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=0, le=100)] = 50,
 ) -> ApiResponse[list[Anime]]:
     anime_service = AnimeService(session)
-    anime_list = await anime_service.get_all(offset, limit)
+    anime_list = await anime_service.get_all(
+        search=search,
+        offset=offset,
+        limit=limit,
+    )
 
     if not anime_list:
         raise NotFoundError

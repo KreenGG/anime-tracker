@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.anime import Anime
@@ -18,10 +18,23 @@ class AnimeDAO:
 
     async def get_all(
         self,
-        offset: int,
-        limit: int,
+        search: str = "",
+        offset: int = 0,
+        limit: int = 50,
     ) -> Sequence[Anime] | None:
-        stmt = select(Anime).offset(offset).limit(limit)
+        stmt = (
+            select(Anime)
+            .filter(
+                or_(
+                    Anime.english.ilike(f"%{search}%"),
+                    Anime.russian.ilike(f"%{search}%"),
+                    Anime.name.ilike(f"%{search}%"),
+                    Anime.japanese.ilike(f"%{search}%"),
+                )
+            )
+            .offset(offset)
+            .limit(limit)
+        )
         result = await self.session.execute(stmt)
         animes = result.scalars().all()
         if not animes:

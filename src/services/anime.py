@@ -15,10 +15,15 @@ class AnimeService:
 
     async def get_all(
         self,
+        search: str,
         offset: int,
         limit: int,
     ) -> list[Anime] | None:
-        animes_db = await self.anime_dao.get_all(offset, limit)
+        animes_db = await self.anime_dao.get_all(
+            search=search,
+            offset=offset,
+            limit=limit,
+        )
         if not animes_db:
             return None
         animes = [Anime.model_validate(anime) for anime in animes_db]
