@@ -17,7 +17,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag anime-tracker-main-app:$(date +%s)
     - name: check containers
-      run: docker ps -a
+      run: docker image ls
     - name: Run
       run: docker run anime-tracker-main-app -d
 
