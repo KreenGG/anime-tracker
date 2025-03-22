@@ -18,8 +18,6 @@ jobs:
       run: docker build . --file Dockerfile --tag anime-tracker-main-app:$(date +%s)
     - name: check containers
       run: docker image ls
-    - name: Run
-      run: docker run anime-tracker-main-app -d
 
   test:
 
