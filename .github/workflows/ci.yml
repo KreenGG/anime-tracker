@@ -16,6 +16,10 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag anime-tracker-main-app:$(date +%s)
+    - name: check containers
+      run: docker ps -a
+    - name: Run
+      run: docker run anime-tracker-main-app -d
 
   test:
 
