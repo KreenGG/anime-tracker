@@ -1,0 +1,11 @@
+<div class="navbar">
+    <a class="home-link" href="/">
+        <img class="home-link" src="/static/images/white-logo.svg">
+    </a>
+    <div class="search-container">
+        <form action="/" onsubmit="location.href='/'" method="GET">
+            <input type="search" name="search" placeholder="Поиск" value="{{ search if search else '' }}">
+        </form>
+    </div>
+    <div></div>
+</div>

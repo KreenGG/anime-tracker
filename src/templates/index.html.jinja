@@ -1,0 +1,28 @@
+{% extends 'base.html.jinja' %}
+
+
+{% block title %}
+Anime Tracker
+{% endblock %}
+
+
+{% block head %}
+<link rel="stylesheet" href="/static/styles/index.css" />
+{% endblock %}
+
+
+{% block content %}
+<div class="anime-container">
+    {% if not animes["data"] %}
+    <div>Ничего не найдено!</div>
+    {% endif %}
+    {% for anime in animes["data"] %}
+    <div class="anime-card">
+        <a href="/animes/{{ anime.id }}" title="{{ anime.russian }}">
+            <img src="{{ anime.poster }}" />
+            <a class="anime-title" href="/api/animes/{{ anime.id }}">{{ anime.russian }}</a>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

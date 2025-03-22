@@ -17,6 +17,7 @@ services:
     # <путь в системе>:<путь в контейнере>
     volumes:
       - ./src:/app/src
+      - ./static:/app/static
       - .env:/app/.env
       - ./logs:/app/logs
   postgres:
