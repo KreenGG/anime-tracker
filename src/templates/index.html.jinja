@@ -1,42 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html.jinja' %}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anime Tracker</title>
 
-    <!-- font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet" />
+{% block title %}
+Anime Tracker
+{% endblock %}
 
-    <!-- own links -->
-    <link rel="stylesheet" href="/static/styles/index.css" />
-</head>
 
-<body>
-    <div class="search-container">
-        <form method="GET">
-            <input type="search" name="search" placeholder="Поиск" value="{{ search if search else '' }}">
-        </form>
-    </div>
+{% block head %}
+<link rel="stylesheet" href="/static/styles/index.css" />
+{% endblock %}
 
-    {% if request.query_params %}
-    <a href="/">Сбросить фильтры</a>
+
+{% block content %}
+<div class="anime-container">
+    {% if not animes["data"] %}
+    <div>Ничего не найдено!</div>
     {% endif %}
-
-    <div class="anime-container">
-        {% for anime in animes["data"] %}
-        <div class="anime-card">
-            <a href="/api/animes/{{ anime.id }}" title="{{ anime.russian }}">
-                <img src="{{ anime.poster }}" />
-                <a class="anime-title" href="/api/animes/{{ anime.id }}">{{ anime.russian }}</a>
-            </a>
-        </div>
-        {% endfor %}
+    {% for anime in animes["data"] %}
+    <div class="anime-card">
+        <a href="/animes/{{ anime.id }}" title="{{ anime.russian }}">
+            <img src="{{ anime.poster }}" />
+            <a class="anime-title" href="/api/animes/{{ anime.id }}">{{ anime.russian }}</a>
+        </a>
     </div>
-</body>
-
-</html>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -6,4 +6,5 @@ router = APIRouter(
     prefix="",
     include_in_schema=False,
 )
+
 router.include_router(pages_router)

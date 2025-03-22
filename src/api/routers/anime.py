@@ -25,8 +25,12 @@ async def get_animes(
     search: Annotated[str, Query()] = "",
     offset: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=0, le=100)] = 50,
+    page: Annotated[int, Query(ge=1)] = 1,
 ) -> ApiResponse[list[Anime]]:
     anime_service = AnimeService(session)
+    if page > 1:
+        offset = (page - 1) * limit
+
     anime_list = await anime_service.get_all(
         search=search,
         offset=offset,
