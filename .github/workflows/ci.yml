@@ -6,27 +6,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
-jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag anime-tracker-main-app
-      
-    - name: check containers
-      run: docker image ls
-      
-    - name: Run
-      run: docker run -d anime-tracker-main-app
+jobs:   
 
   test:
-
-    needs: build
     runs-on: ubuntu-latest
     env:
       TEST_POSTGRES_DB: db
@@ -36,6 +18,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag anime-tracker-main-app
+      
+    - name: check containers
+      run: docker image ls
+      
+    - name: Run
+      run: docker run -d anime-tracker-main-app
     
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
@@ -50,4 +41,4 @@ jobs:
       run: docker exec -it anime-tracker-main-app uv add pytest
 
     - name: Run pytest
-      run: docker exec -it anime-tracker-main-app pytest -s -v
+      run: docker exec -it anime-tracker-main-app uv run pytest -s -v
