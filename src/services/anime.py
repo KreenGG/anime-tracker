@@ -18,14 +18,12 @@ class AnimeService:
         search: str,
         offset: int,
         limit: int,
-    ) -> list[Anime] | None:
+    ) -> list[Anime]:
         animes_db = await self.anime_dao.get_all(
             search=search,
             offset=offset,
             limit=limit,
         )
-        if not animes_db:
-            return None
         animes = [Anime.model_validate(anime) for anime in animes_db]
         return animes
 

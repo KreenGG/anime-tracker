@@ -33,9 +33,6 @@ async def get_animes(
         limit=limit,
     )
 
-    if not anime_list:
-        raise NotFoundError
-
     return ApiResponse(data=anime_list)
 
 

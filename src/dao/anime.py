@@ -21,7 +21,7 @@ class AnimeDAO:
         search: str = "",
         offset: int = 0,
         limit: int = 50,
-    ) -> Sequence[Anime] | None:
+    ) -> Sequence[Anime]:
         stmt = (
             select(Anime)
             .filter(
@@ -37,8 +37,6 @@ class AnimeDAO:
         )
         result = await self.session.execute(stmt)
         animes = result.scalars().all()
-        if not animes:
-            return None
         return animes
 
     async def get_single_or_none(self, **kwargs) -> Anime | None:
