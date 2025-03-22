@@ -7,7 +7,6 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from src.database import Base, get_session
 from src.main import create_app
 from tests.utils.anime import create_bunch_anime
 
@@ -34,6 +33,8 @@ async_session_maker = async_sessionmaker(
 
 @pytest.fixture(scope="session", autouse=True)
 async def create_tables():
+    from src.database import Base
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
@@ -55,6 +56,8 @@ async def db_session():
 
 @pytest.fixture(scope="session")
 async def app(db_session) -> FastAPI:
+    from src.database import get_session
+
     async def override_get_db():
         try:
             yield db_session
