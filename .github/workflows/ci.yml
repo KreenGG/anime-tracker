@@ -34,7 +34,7 @@ jobs:
       run: docker compose -f docker-compose-test.yaml up -d
       
     - name: Install pytest
-      run: docker exec -it anime-tracker-main-app:$(date +%s) uv add pytest
+      run: docker exec -it anime-tracker-main-app uv add pytest
 
     - name: Run pytest
-      run: docker exec -it anime-tracker-test-db pytest -s -v
+      run: docker exec -it anime-tracker-main-app pytest -s -v
