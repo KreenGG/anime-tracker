@@ -14,10 +14,16 @@ jobs:
       TEST_POSTGRES_DB: db
       TEST_POSTGRES_USER: user
       TEST_POSTGRES_PASSWORD: pass
-      TEST_POSTGRES_HOST: postgres-test
+      TEST_POSTGRES_HOST: localhost
 
     steps:
     - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install pytest
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag anime-tracker-main-app
@@ -36,9 +42,6 @@ jobs:
 
     - name: Check containers
       run: docker image ls
-      
-    - name: Install pytest
-      run: docker exec -it anime-tracker-main-app uv add pytest
 
     - name: Run pytest
-      run: docker exec -it anime-tracker-main-app uv run pytest -s -v
+      run: pytest -v -s
