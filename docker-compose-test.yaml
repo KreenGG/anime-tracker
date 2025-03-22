@@ -5,8 +5,6 @@ services:
     image: postgres:latest
     container_name: anime-tracker-test-db
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
       POSTGRES_DB: ${TEST_POSTGRES_DB}
       POSTGRES_USER: ${TEST_POSTGRES_USER}
