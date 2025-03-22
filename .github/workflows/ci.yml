@@ -33,6 +33,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Run
+      run: docker run anime-tracker-main-app -d
     
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
