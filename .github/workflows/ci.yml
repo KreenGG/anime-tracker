@@ -14,10 +14,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag anime-tracker-main-app
+      
     - name: check containers
       run: docker image ls
+      
     - name: Run
       run: docker run -d anime-tracker-main-app
 
@@ -33,9 +36,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Run
-      run: docker run anime-tracker-main-app -d
     
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
