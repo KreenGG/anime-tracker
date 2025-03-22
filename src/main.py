@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-from src.api import router
-from src.api.dependencies import UserDep
+from src.api import router as api_router
 from src.logger import setup_logging
+from src.pages import router as pages_router
 
 
 def create_app():
@@ -30,16 +31,10 @@ def create_app():
         allow_headers=["*"],
     )
 
-    app.include_router(router)
+    app.include_router(api_router)
 
-    @app.get("/test_with_auth")
-    async def test_auth(
-        user: UserDep,
-    ):
-        return user
-
-    @app.get("/test_without_auth")
-    async def test_without_auth():
-        return "Free endpoint"
+    # frontend pages
+    app.mount("/static", StaticFiles(directory="src/static"), "static")
+    app.include_router(pages_router)
 
     return app

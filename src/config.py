@@ -24,7 +24,7 @@ class DatabaseConfig(BaseSettings):
 
     driver: str = "asyncpg"
     database_system: str = "postgresql"
-    echo: bool = True
+    echo: bool = False
 
     @property
     def url(self) -> str:
