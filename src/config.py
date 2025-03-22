@@ -16,11 +16,11 @@ load_dotenv(find_dotenv(str(BASE_DIRECTORY / ".env")))
 class DatabaseConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
-    username: str | None = Field(alias="POSTGRES_USER", default=None)
+    username: str | None = Field(alias="POSTGRES_USER", default="username")
     password: SecretStr = SecretStr(secrets.token_urlsafe())
-    host: str | None = None
-    port: int | None = None
-    database: str | None = Field(alias="POSTGRES_DB", default=None)
+    host: str | None = "localhost"
+    port: int | None = 5432
+    database: str | None = Field(alias="POSTGRES_DB", default="db")
 
     driver: str = "asyncpg"
     database_system: str = "postgresql"
