@@ -21,6 +21,11 @@ jobs:
 
     needs: build
     runs-on: ubuntu-latest
+    env:
+      TEST_POSTGRES_DB: db
+      TEST_POSTGRES_USER: user
+      TEST_POSTGRES_PASSWORD: pass
+      TEST_POSTGRES_HOST: postgres-test
 
     steps:
     - uses: actions/checkout@v4
