@@ -40,7 +40,10 @@ async def test_get_all_anime_with_limit_zero(
     url = app.url_path_for("get_animes")
     response = await ac.get(f"{url}?limit=0")
 
-    assert response.status_code == 404
+    assert response.status_code == 200
+
+    json_anime_list = response.json()["data"]
+    assert len(json_anime_list) == 0
 
 
 @pytest.mark.parametrize("offset", [0, 10, 20])
