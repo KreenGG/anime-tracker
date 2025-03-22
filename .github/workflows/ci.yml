@@ -15,6 +15,7 @@ jobs:
       TEST_POSTGRES_USER: user
       TEST_POSTGRES_PASSWORD: pass
       TEST_POSTGRES_HOST: localhost
+      TEST_POSTGRES_PORT: 5431
 
     steps:
     - uses: actions/checkout@v4
