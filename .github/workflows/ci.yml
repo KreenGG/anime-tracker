@@ -19,29 +19,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v5
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
       with:
-        python-version: '3.12'
-        cache: 'pip' # caching pip dependencies
-    - run: pip install pytest
+        enable-cache: true
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag anime-tracker-main-app
-      
-    - name: check containers
-      run: docker image ls
-      
-    - name: Run
-      run: docker run -d anime-tracker-main-app
-    
+    - name: Install the project
+      run: uv sync --all-extras --dev
+
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
 
-    - name: Check containers
-      run: docker ps -a
+    - name: Run tests
+      # For example, using `pytest`
+      run: uv run pytest tests -s -v
 
-    - name: Check containers
-      run: docker image ls
+    
+    
 
-    - name: Run pytest
-      run: pytest -v -s
