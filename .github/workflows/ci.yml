@@ -7,8 +7,24 @@ on:
     branches: [ "master" ]
 
 jobs:
-  dependencies:
+  lint-format:
     runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check with ruff
+      uses: astral-sh/ruff-action@v3
+
+
+  test:
+    runs-on: ubuntu-latest
+    env:
+      TEST_POSTGRES_DB: db
+      TEST_POSTGRES_USER: user
+      TEST_POSTGRES_PASSWORD: pass
+      TEST_POSTGRES_HOST: localhost
+      TEST_POSTGRES_PORT: 5431
 
     steps:
     - uses: actions/checkout@v4
@@ -20,31 +36,6 @@ jobs:
 
     - name: Install the project dependencies
       run: uv sync --all-extras --dev
-
-
-  lint-format:
-    needs: dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Check with ruff
-      uses: astral-sh/ruff-action@v3
-
-
-  test:
-    needs: dependencies
-    runs-on: ubuntu-latest
-    env:
-      TEST_POSTGRES_DB: db
-      TEST_POSTGRES_USER: user
-      TEST_POSTGRES_PASSWORD: pass
-      TEST_POSTGRES_HOST: localhost
-      TEST_POSTGRES_PORT: 5431
-
-    steps:
-    - uses: actions/checkout@v4
 
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
