@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CI (Test Lint Typecheck)
 
 on:
   push:
@@ -6,16 +6,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
-jobs:   
-
-  test:
+jobs:
+  dependencies:
     runs-on: ubuntu-latest
-    env:
-      TEST_POSTGRES_DB: db
-      TEST_POSTGRES_USER: user
-      TEST_POSTGRES_PASSWORD: pass
-      TEST_POSTGRES_HOST: localhost
-      TEST_POSTGRES_PORT: 5431
 
     steps:
     - uses: actions/checkout@v4
@@ -25,16 +18,36 @@ jobs:
       with:
         enable-cache: true
 
-    - name: Install the project
+    - name: Install the project dependencies
       run: uv sync --all-extras --dev
 
+
+  lint-format:
+    needs: dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check with ruff
+      uses: astral-sh/ruff-action@v3
+
+
+  test:
+    needs: dependencies
+    runs-on: ubuntu-latest
+    env:
+      TEST_POSTGRES_DB: db
+      TEST_POSTGRES_USER: user
+      TEST_POSTGRES_PASSWORD: pass
+      TEST_POSTGRES_HOST: localhost
+      TEST_POSTGRES_PORT: 5431
+
+    steps:
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
 
     - name: Run tests
-      # For example, using `pytest`
       run: uv run pytest tests -s -v
 
-    
-    
+
+
 
