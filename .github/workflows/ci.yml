@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CI (Test Lint Typecheck)
 
 on:
   push:
@@ -6,7 +6,16 @@ on:
   pull_request:
     branches: [ "master" ]
 
-jobs:   
+jobs:
+  lint-format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check with ruff
+      uses: astral-sh/ruff-action@v3
+
 
   test:
     runs-on: ubuntu-latest
@@ -25,16 +34,15 @@ jobs:
       with:
         enable-cache: true
 
-    - name: Install the project
+    - name: Install the project dependencies
       run: uv sync --all-extras --dev
 
     - name: Start test db
       run: docker compose -f docker-compose-test.yaml up -d
 
     - name: Run tests
-      # For example, using `pytest`
       run: uv run pytest tests -s -v
 
-    
-    
+
+
 

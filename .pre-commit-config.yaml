@@ -3,9 +3,7 @@ repos:
   # Ruff version.
   rev: v0.9.9
   hooks:
-    # Run the linter.
     - id: ruff
-    # Run the formatter.
     - id: ruff-format
 
 - repo: https://github.com/pre-commit/mirrors-mypy
@@ -13,12 +11,12 @@ repos:
   hooks:
   -   id: mypy
 
-- repo: local
-  hooks:
-  - id: pytest
-    name: pytest
-    entry: uv run pytest tests
-    language: system
-    types: [python]
-    pass_filenames: false
-    always_run: true
+# - repo: local
+#   hooks:
+#   - id: pytest
+#     name: pytest
+#     entry: uv run pytest tests
+#     language: system
+#     types: [python]
+#     pass_filenames: false
+#     always_run: true
