@@ -15,7 +15,7 @@ Inspired by [shikimori.one](https://shikimori.one/)
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/KreenGG/anime-tracker.git
+   git clone https://github.com/kreengg/anime-tracker.git
    cd anime-tracker
    ```
 2. Create and configure `.env` file from `.env.example`(test section can be skipped)
