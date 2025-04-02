@@ -25,4 +25,10 @@ Anime Tracker
     </div>
     {% endfor %}
 </div>
+
+{% if current_page > 1 %}
+<a href="/?page={{ current_page - 1 }}">Назад</a>
+{% endif %}
+
+<a href="/?page={{ current_page + 1 }}">Вперед</a>
 {% endblock %}
