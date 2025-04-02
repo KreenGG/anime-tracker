@@ -20,12 +20,7 @@ async def get_user_rates(
 ) -> ApiResponse[list[UserRateGet]]:
     user_rate_service = UserRateService(session)
 
-    try:
-        user_rates = await user_rate_service.get_all(user.id)
-    except NotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=[{"msg": e.detail}]
-        )
+    user_rates = await user_rate_service.get_all(user.id)
 
     return ApiResponse(data=user_rates)
 

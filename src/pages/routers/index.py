@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="src/templates")
 async def get_index_html(request: Request, animes=Depends(get_animes)):
     current_page = 1
     if request.query_params.get("page"):
-        current_page = int(request.query_params.get("page"))
+        current_page = int(request.query_params["page"])
     return templates.TemplateResponse(
         name="index.html.jinja",
         context={"request": request, "animes": animes, "current_page": current_page},

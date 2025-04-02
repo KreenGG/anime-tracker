@@ -16,7 +16,7 @@ class UserRateService:
     async def get_all(self, user_id: int) -> list[UserRateGet]:
         user_rates = await self.user_rate_dao.get_all(user_id)
         if not user_rates:
-            raise NotFoundError(f"User rates for user id={user_id} not found")
+            return []
 
         return [UserRateGet.model_validate(user_rate) for user_rate in user_rates]
 
