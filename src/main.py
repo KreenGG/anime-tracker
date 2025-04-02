@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -8,6 +9,8 @@ from fastapi.staticfiles import StaticFiles
 from src.api import router as api_router
 from src.logger import setup_logging
 from src.pages import router as pages_router
+
+logger = logging.getLogger(__name__)
 
 
 def setup_templates(app: FastAPI) -> None:
@@ -26,6 +29,7 @@ def setup_templates(app: FastAPI) -> None:
 
 def create_app():
     setup_logging()
+    logger.info("Logger configured")
 
     app = FastAPI(
         title="Anime Tracker",
@@ -51,4 +55,5 @@ def create_app():
     app.include_router(api_router)
     setup_templates(app)
 
+    logger.info("Application started")
     return app

@@ -13,6 +13,10 @@ BASE_DIRECTORY = Path(__file__).resolve().parent.parent
 load_dotenv(find_dotenv(str(BASE_DIRECTORY / ".env")))
 
 
+class AppConfig(BaseSettings):
+    log_level: str = "INFO"
+
+
 class DatabaseConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
@@ -48,6 +52,7 @@ class AuthConfig(BaseSettings):
 
 
 class Config(BaseSettings):
+    app: AppConfig = AppConfig()
     db: DatabaseConfig = DatabaseConfig()
     auth: AuthConfig = AuthConfig()
 

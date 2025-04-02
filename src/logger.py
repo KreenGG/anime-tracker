@@ -1,22 +1,12 @@
 import logging
-from logging.handlers import RotatingFileHandler
-from pathlib import Path
+import logging.config
 
-LOG_DIR = Path(__file__).parent.parent / "logs"
-if not Path.exists(LOG_DIR):
-    Path(LOG_DIR).mkdir(parents=True)
+from src.config import config
 
-LOG_FILE_PATH = Path(LOG_DIR) / "app.log"
-
-LOGGING_LEVEL = logging.DEBUG
 LOGGING_FORMAT = "%(asctime)s - %(name)s:%(lineno)d - %(levelname)s - %(message)s"
 
 
 def setup_logging() -> None:
-    logging.basicConfig(level=LOGGING_LEVEL, format=LOGGING_FORMAT)
+    log_level = config.app.log_level
 
-    file_handler = RotatingFileHandler(LOG_FILE_PATH, maxBytes=10485760, backupCount=5)
-    file_handler.setLevel(LOGGING_LEVEL)
-    file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-
-    logging.getLogger("").addHandler(file_handler)
+    logging.basicConfig(level=log_level, format=LOGGING_FORMAT)
