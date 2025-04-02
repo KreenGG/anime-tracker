@@ -1,7 +1,7 @@
 import logging
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBearer,
@@ -27,16 +27,21 @@ UnauthorizedError = HTTPException(
 
 
 async def get_current_user(
+    request: Request,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     session: SessionDep,
 ) -> UserDTO:
-    if not token:
+    if not token and not request.cookies.get("access_token"):
         logger.warning("Token does not provided")
         raise UnauthorizedError
+    elif request.cookies.get("access_token"):
+        token = request.cookies.get("access_token")
+    else:
+        token = token.credentials
 
     user_service = UserService(session)
     try:
-        payload = verify_token(token.credentials)
+        payload = verify_token(token)
         if payload.sub:
             user_id = int(payload.sub)
         else:

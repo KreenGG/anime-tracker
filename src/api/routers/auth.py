@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Response, status
 
 from src.api.dependencies import SessionDep
 from src.exceptions.auth import (
@@ -32,6 +32,7 @@ async def register(
 
 @router.post("/login", response_model=Token)
 async def login(
+    response: Response,
     user_in: UserLogin,
     session: SessionDep,
 ):
@@ -44,4 +45,5 @@ async def login(
             [{"msg": e.detail}],
         ) from AuthError
 
+    response.set_cookie("access_token", token.access_token, httponly=True)
     return token
