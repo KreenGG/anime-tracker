@@ -3,6 +3,7 @@ import logging
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.exceptions.repository import RecordNotFoundError
 from src.models.user import User
 
 logger = logging.getLogger(__name__)
@@ -15,13 +16,13 @@ class UserDAO:
     ):
         self.session = session
 
-    async def get_single(self, **kwargs) -> User | None:
+    async def get_single(self, **kwargs) -> User:
         logger.debug("Getting user by: %s", kwargs)
         stmt = select(User).filter_by(**kwargs)
         result = await self.session.execute(stmt)
         user = result.scalars().first()
         if not user:
-            return None
+            raise RecordNotFoundError
         return user
 
     async def create(self, user: User) -> None:
