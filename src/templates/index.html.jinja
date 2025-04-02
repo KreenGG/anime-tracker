@@ -17,8 +17,8 @@ Anime Tracker
     <div>Ничего не найдено!</div>
     {% endif %}
     {% for anime in animes["data"] %}
-    <div class="anime-card">
-        <a href="/animes/{{ anime.id }}" title="{{ anime.russian }}">
+    <div class="anime-card" title="{{ anime.russian }}">
+        <a href="/animes/{{ anime.id }}">
             <img src="{{ anime.poster }}" />
             <a class="anime-title" href="/api/animes/{{ anime.id }}">{{ anime.russian }}</a>
         </a>
