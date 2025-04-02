@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dao.user import UserDAO
 from src.exceptions.auth import InvalidCredentialsError, UserAlreadyExistsError
+from src.exceptions.repository import RecordNotFoundError
 from src.models.user import User as UserModel
 from src.schemas.auth import Token
-from src.schemas.user import UserDTO, UserLogin, UserRegister
+from src.schemas.user import UserDTO, UserLogin, UserRegister, UserUpdate
 from src.utils.auth import (
     create_access_token,
     get_password_hash,
@@ -47,9 +48,11 @@ class UserService:
         self,
         user_data: UserLogin,
     ) -> Token:
-        user_db = await self.user_dao.get_single(email=user_data.email)
-        if not user_db:
+        try:
+            user_db = await self.user_dao.get_single(email=user_data.email)
+        except RecordNotFoundError:
             raise InvalidCredentialsError
+
         if not verify_password(user_data.password, user_db.hashed_password):
             raise InvalidCredentialsError
 
@@ -65,3 +68,12 @@ class UserService:
         user = UserDTO.model_validate(user_db)
 
         return user
+
+    async def update_user(self, user_id: int, update_data: UserUpdate) -> UserDTO:
+        db_user = await self.user_dao.get_single(id=user_id)
+
+        for var, value in vars(update_data).items():
+            setattr(db_user, var, value) if value else None
+        await self.session.commit()
+
+        return UserDTO.model_validate(db_user)

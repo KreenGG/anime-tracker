@@ -21,3 +21,7 @@ class UserLogin(BaseModel):
 
 class UserRegister(UserLogin):
     nickname: str = Field(min_length=3, max_length=32)
+
+
+class UserUpdate(BaseModel):
+    nickname: str | None = Field(min_length=3, max_length=32, default=None)
