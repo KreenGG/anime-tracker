@@ -5,12 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: anime-tracker-main-app
     env_file:
-      - path: ./.env
-        required: false
-    environment:
-      POSTGRES_DB: $POSTGRES_DB
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      - ./.env
     ports:
       - "8000:8000"
     # expose:
@@ -28,7 +23,12 @@ services:
     container_name: anime-tracker-db
     restart: unless-stopped
     env_file:
-      - .env
+      - path: ./.env
+        required: false
+    environment:
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
