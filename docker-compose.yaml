@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: anime-tracker-main-app
     env_file:
-      - ./.env
+      - path: ./.env
+        required: false
     environment:
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_USER: $POSTGRES_USER
