@@ -16,7 +16,6 @@ services:
     volumes:
       - ./src:/app/src
       - ./static:/app/static
-      - .env:/app/.env
       - ./logs:/app/logs
   postgres:
     image: postgres:latest
