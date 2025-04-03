@@ -20,11 +20,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      TEST_POSTGRES_DB: db
-      TEST_POSTGRES_USER: user
-      TEST_POSTGRES_PASSWORD: pass
-      TEST_POSTGRES_HOST: localhost
-      TEST_POSTGRES_PORT: 5431
+      POSTGRES_DB: anime-tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
 
     steps:
     - uses: actions/checkout@v4
@@ -37,8 +35,8 @@ jobs:
     - name: Install the project dependencies
       run: uv sync --all-extras --dev
 
-    - name: Start test db
-      run: docker compose -f docker-compose-test.yaml up -d
+    - name: Start db in docker
+      run: docker compose up postgres -d
 
     - name: Run tests
       run: uv run pytest tests -s -v

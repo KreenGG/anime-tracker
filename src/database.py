@@ -6,7 +6,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from src.config import config
 
-SQLALCHEMY_DATABASE_URL = config.db.url
+SQLALCHEMY_DATABASE_URL = config.db.url()
 DATABASE_PARAMS = {
     "echo": config.db.echo,
 }
