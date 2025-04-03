@@ -19,6 +19,10 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_DB: anime-tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
 
     steps:
     - uses: actions/checkout@v4
