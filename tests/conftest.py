@@ -39,9 +39,9 @@ async def async_engine(config: Config) -> AsyncGenerator[AsyncEngine, Any]:
 
     engine_for_create_db = create_async_engine(
         config.db.url(testing=True),
+        isolation_level="AUTOCOMMIT",
     )
 
-    print(test_db_name)
     connection_for_create_test_db = await engine_for_create_db.connect()
     engine_with_test_db = None
 
