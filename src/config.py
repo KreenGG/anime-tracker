@@ -20,7 +20,7 @@ class AppConfig(BaseSettings):
 class DatabaseConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="POSTGRES_")
 
-    username: str | None = Field(alias="POSTGRES_USER", default="username")
+    user: str | None = Field(alias="POSTGRES_USER", default="username")
     password: SecretStr = SecretStr(secrets.token_urlsafe())
     host: str | None = "localhost"
     port: int | None = 5432
@@ -30,17 +30,24 @@ class DatabaseConfig(BaseSettings):
     database_system: str = "postgresql"
     echo: bool = False
 
-    @property
-    def url(self) -> str:
+    def url(self, testing: bool = False) -> str:
         dsn: PostgresDsn = PostgresDsn.build(
             scheme=f"{self.database_system}+{self.driver}",
-            username=self.username,
+            username=self.user,
             password=self.password.get_secret_value() if self.password else None,
-            host=self.host,
+            host="localhost" if testing else self.host,
             port=self.port,
             path=self.database,
         )
         return dsn.unicode_string()
+
+    @property
+    def test_postgres_db(self) -> str:
+        return f"test_{self.database}"
+
+    @property
+    def test_postgres_url(self) -> str:
+        return f"postgresql+asyncpg://{self.user}:{self.password.get_secret_value()}@localhost:{self.port}/{self.test_postgres_db}"
 
 
 class AuthConfig(BaseSettings):
