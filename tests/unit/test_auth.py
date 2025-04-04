@@ -1,5 +1,3 @@
-import secrets
-
 import pytest
 
 from src.utils.auth import (
@@ -11,7 +9,7 @@ from src.utils.auth import (
 
 
 @pytest.mark.parametrize(
-    "plain_password", ["212121121", "ghgdf13!", secrets.token_urlsafe()]
+    "plain_password", ["212121121", "ghgdf13!", "kjfgf!213*$&#fldjf"]
 )
 def test_password_encoding(plain_password):
     hashed_password = get_password_hash(plain_password)
