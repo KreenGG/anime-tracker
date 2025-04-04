@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Sequence
+from typing import Any
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,6 +37,13 @@ class UserRateDAO:
         user_rate = UserRate(user_id=user.id, **user_rate_in.model_dump())
 
         self.session.add(user_rate)
+        return user_rate
+
+    async def update(
+        self, user_rate: UserRate, data_to_update: dict[str, Any]
+    ) -> UserRate:
+        for key, value in data_to_update.items():
+            setattr(user_rate, key, value)
         return user_rate
 
     async def delete(self, id: int) -> None:

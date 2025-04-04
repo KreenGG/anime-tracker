@@ -9,7 +9,7 @@ from src.exceptions.base import (
     ForbiddenError,
     NotFoundError,
 )
-from src.schemas.user_rate import UserRateCreate, UserRateGet
+from src.schemas.user_rate import UserRateCreate, UserRateGet, UserRateUpdate
 from src.services.user_rate import UserRateService
 
 logger = logging.getLogger(__name__)
@@ -55,6 +55,34 @@ async def create_user_rate(
         )
 
     return new_user_rate
+
+
+@router.patch(
+    "/{id}",
+    responses={
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorResponse},
+        status.HTTP_403_FORBIDDEN: {"model": ErrorResponse},
+    },
+)
+async def update_user_rate(
+    session: SessionDep,
+    user: UserDep,
+    id: int,
+    update_data: UserRateUpdate,
+) -> UserRateGet:
+    user_rate_service = UserRateService(session)
+    try:
+        updated_user_rate = await user_rate_service.update(user.id, id, update_data)
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=[{"msg": e.detail}]
+        )
+    except ForbiddenError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=[{"msg": "Forbidden"}]
+        )
+
+    return updated_user_rate
 
 
 @router.delete(

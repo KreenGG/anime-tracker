@@ -6,7 +6,7 @@ from src.dao.anime import AnimeDAO
 from src.dao.user_rate import UserRateDAO
 from src.exceptions.base import AlreadyExistsError, ForbiddenError, NotFoundError
 from src.schemas.user import UserDTO
-from src.schemas.user_rate import UserRateCreate, UserRateGet
+from src.schemas.user_rate import UserRateCreate, UserRateGet, UserRateUpdate
 
 logger = getLogger(__name__)
 
@@ -46,6 +46,22 @@ class UserRateService:
         await self.session.refresh(user_rate)
 
         return UserRateGet.model_validate(user_rate)
+
+    async def update(
+        self, user_id: int, user_rate_id: int, update_data: UserRateUpdate
+    ) -> UserRateGet:
+        user_rate = await self.user_rate_dao.get_single_or_none(id=user_rate_id)
+        if not user_rate:
+            raise NotFoundError(
+                detail=f"User rate id={user_rate_id} not found",
+            )
+        if user_rate.user_id != user_id:
+            raise ForbiddenError()
+        data_to_update = update_data.model_dump(exclude_unset=True)
+        updated_user_rate = await self.user_rate_dao.update(user_rate, data_to_update)
+        await self.session.commit()
+        await self.session.refresh(updated_user_rate)
+        return updated_user_rate
 
     async def delete(self, user_id: int, user_rate_id: int) -> None:
         user_rate = await self.user_rate_dao.get_single_or_none(id=user_rate_id)
