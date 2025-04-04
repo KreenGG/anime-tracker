@@ -17,15 +17,15 @@ class UserFactory:
             nickname="TestUser",
         )
 
-    async def create_user(self) -> User:
+    async def create_user(self, password: str) -> User:
         user = User(
             email=faker.email(),
-            hashed_password=get_password_hash(faker.password(20)),
+            hashed_password=get_password_hash(password),
             nickname=faker.user_name(),
         )
 
         self.session.add(user)
-        await self.session.flush()
+        await self.session.commit()
         await self.session.refresh(user)
         return user
 
