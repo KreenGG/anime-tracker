@@ -17,16 +17,17 @@ from sqlalchemy.ext.asyncio import (
 from src.config import Config
 from src.config import config as app_config
 from src.main import create_app
-from tests.fixtures.factories import anime_factory, user_factory
+from tests.fixtures.factories import anime_factory, user_factory, user_rate_factory
 
 from .factories.user import UserFactory
 
 logger = logging.getLogger(__name__)
 
-
+# Import fixtures from another file
 fixtures = [
     anime_factory,
     user_factory,
+    user_rate_factory,
 ]
 
 

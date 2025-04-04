@@ -20,7 +20,7 @@ class UserRateDAO:
         self.session = session
 
     async def get_all(self, user_id: int) -> Sequence[UserRate] | None:
-        stmt = select(UserRate).where(User.id == user_id)
+        stmt = select(UserRate).join(User).where(User.id == user_id)
         result = await self.session.execute(stmt)
 
         user_rates = result.scalars().all()
