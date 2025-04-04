@@ -17,16 +17,17 @@ from sqlalchemy.ext.asyncio import (
 from src.config import Config
 from src.config import config as app_config
 from src.main import create_app
-from tests.fixtures.factories import anime_factory, user_factory
+from tests.fixtures.factories import anime_factory, user_factory, user_rate_factory
 
 from .factories.user import UserFactory
 
 logger = logging.getLogger(__name__)
 
-
+# Import fixtures from another file
 fixtures = [
     anime_factory,
     user_factory,
+    user_rate_factory,
 ]
 
 
@@ -97,7 +98,7 @@ async def async_session_maker(async_engine):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 async def db_session(async_session_maker):
     async with async_session_maker() as session:
         yield session
@@ -105,7 +106,7 @@ async def db_session(async_session_maker):
         await session.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 async def app(db_session: AsyncSession) -> FastAPI:
     from src.database import get_session
 
@@ -120,7 +121,7 @@ async def app(db_session: AsyncSession) -> FastAPI:
     return app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 async def ac(app) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -128,20 +129,20 @@ async def ac(app) -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 async def auth_ac_and_user(app: FastAPI, user_factory: UserFactory):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
-        user = await user_factory.create_test_user()
+        user = await user_factory.create_user("test")
 
         url = app.url_path_for("login")
 
         response = await ac.post(
             url,
             json={
-                "email": user_factory.test_user.email,
-                "password": user_factory.test_user_plain_password,
+                "email": user.email,
+                "password": "test",
             },
         )
 
