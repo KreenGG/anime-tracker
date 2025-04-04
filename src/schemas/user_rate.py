@@ -26,7 +26,6 @@ class UserRateGet(UserRateCreate):
 
 
 class UserRateUpdate(BaseModel):
-    anime_id: int | None = None
     status: Status | None = None
     score: int | None = Field(default=None, ge=0, le=10)
     rewatches: int | None = Field(default=None, ge=0)
