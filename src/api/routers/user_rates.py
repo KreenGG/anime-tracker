@@ -4,7 +4,11 @@ from fastapi import APIRouter, HTTPException, status
 
 from src.api.dependencies import SessionDep, UserDep
 from src.api.schemas import ApiResponse, ErrorResponse
-from src.exceptions.base import AlreadyExistsError, NotFoundError
+from src.exceptions.base import (
+    AlreadyExistsError,
+    ForbiddenError,
+    NotFoundError,
+)
 from src.schemas.user_rate import UserRateCreate, UserRateGet
 from src.services.user_rate import UserRateService
 
@@ -51,3 +55,32 @@ async def create_user_rate(
         )
 
     return new_user_rate
+
+
+@router.delete(
+    "/{id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorResponse},
+        status.HTTP_403_FORBIDDEN: {"model": ErrorResponse},
+    },
+)
+async def delete_user_rate(
+    session: SessionDep,
+    user: UserDep,
+    id: int,
+) -> None:
+    user_rate_service = UserRateService(session)
+
+    try:
+        await user_rate_service.delete(user.id, id)
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=[{"msg": e.detail}]
+        )
+    except ForbiddenError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=[{"msg": "Forbidden"}]
+        )
+
+    return None

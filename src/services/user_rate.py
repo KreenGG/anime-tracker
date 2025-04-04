@@ -1,10 +1,14 @@
+from logging import getLogger
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dao.anime import AnimeDAO
 from src.dao.user_rate import UserRateDAO
-from src.exceptions.base import AlreadyExistsError, NotFoundError
+from src.exceptions.base import AlreadyExistsError, ForbiddenError, NotFoundError
 from src.schemas.user import UserDTO
 from src.schemas.user_rate import UserRateCreate, UserRateGet
+
+logger = getLogger(__name__)
 
 
 class UserRateService:
@@ -42,3 +46,15 @@ class UserRateService:
         await self.session.refresh(user_rate)
 
         return UserRateGet.model_validate(user_rate)
+
+    async def delete(self, user_id: int, user_rate_id: int) -> None:
+        user_rate = await self.user_rate_dao.get_single_or_none(id=user_rate_id)
+        if not user_rate:
+            raise NotFoundError(
+                detail=f"User rate id={user_rate_id} not found",
+            )
+        if user_rate.user_id != user_id:
+            raise ForbiddenError()
+        await self.user_rate_dao.delete(user_rate_id)
+        await self.session.commit()
+        logger.debug("User rate id=%d deleted", user_rate_id)

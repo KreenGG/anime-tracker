@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.user import User
@@ -37,3 +37,7 @@ class UserRateDAO:
 
         self.session.add(user_rate)
         return user_rate
+
+    async def delete(self, id: int) -> None:
+        stmt = delete(UserRate).where(UserRate.id == id)
+        await self.session.execute(stmt)
