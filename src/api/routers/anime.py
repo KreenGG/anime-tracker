@@ -1,11 +1,11 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, status
 
 from src.api.dependencies import SessionDep
 from src.api.exceptions import NotFoundError
-from src.api.schemas import ApiResponse
+from src.api.schemas import ApiResponse, ErrorResponse
 from src.schemas.anime import Anime
 from src.services.anime import AnimeService
 
@@ -42,6 +42,9 @@ async def get_animes(
 
 @router.get(
     "/{id}",
+    responses={
+        status.HTTP_404_NOT_FOUND: {"model": ErrorResponse},
+    },
 )
 async def get_single_anime(
     session: SessionDep,

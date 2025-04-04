@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response, status
 
 from src.api.dependencies import SessionDep
+from src.api.schemas import ErrorResponse
 from src.exceptions.auth import (
     AuthError,
 )
@@ -13,6 +14,9 @@ router = APIRouter(tags=["Auth"])
 
 @router.post(
     "/register",
+    responses={
+        status.HTTP_400_BAD_REQUEST: {"model": ErrorResponse},
+    },
 )
 async def register(
     user_data: UserRegister,
@@ -30,7 +34,13 @@ async def register(
     return {"success": True}
 
 
-@router.post("/login", response_model=Token)
+@router.post(
+    "/login",
+    response_model=Token,
+    responses={
+        status.HTTP_401_UNAUTHORIZED: {"model": ErrorResponse},
+    },
+)
 async def login(
     response: Response,
     user_in: UserLogin,
