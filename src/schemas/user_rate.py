@@ -23,3 +23,11 @@ class UserRateGet(UserRateCreate):
 
     class Config:
         from_attributes = True
+
+
+class UserRateUpdate(BaseModel):
+    status: Status | None = None
+    score: int | None = Field(default=None, ge=0, le=10)
+    rewatches: int | None = Field(default=None, ge=0)
+    episodes: int | None = Field(default=None, ge=0)
+    text: str | None = None
