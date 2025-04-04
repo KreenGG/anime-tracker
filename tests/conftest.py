@@ -17,11 +17,17 @@ from sqlalchemy.ext.asyncio import (
 from src.config import Config
 from src.config import config as app_config
 from src.main import create_app
-from tests.utils.anime import create_bunch_anime
+from tests.fixtures.factories import anime_factory, user_factory
 
-from .utils.user import TEST_USER, create_bunch_users
+from .factories.user import UserFactory
 
 logger = logging.getLogger(__name__)
+
+
+fixtures = [
+    anime_factory,
+    user_factory,
+]
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -91,20 +97,15 @@ async def async_session_maker(async_engine):
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
-async def fill_tables(async_session_maker):
-    async with async_session_maker() as session:
-        await create_bunch_anime(session)
-        await create_bunch_users(session)
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 async def db_session(async_session_maker):
     async with async_session_maker() as session:
         yield session
+        await session.rollback()
+        await session.close()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 async def app(db_session: AsyncSession) -> FastAPI:
     from src.database import get_session
 
@@ -119,7 +120,7 @@ async def app(db_session: AsyncSession) -> FastAPI:
     return app
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 async def ac(app) -> AsyncGenerator[AsyncClient, None]:
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -127,20 +128,24 @@ async def ac(app) -> AsyncGenerator[AsyncClient, None]:
         yield ac
 
 
-@pytest.fixture
-async def auth_ac(app: FastAPI):
+@pytest.fixture(scope="module")
+async def auth_ac(app: FastAPI, user_factory: UserFactory):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
+        await user_factory.create_test_user()
+
         url = app.url_path_for("login")
 
         response = await ac.post(
             url,
             json={
-                "email": TEST_USER.email,
-                "password": "test",
+                "email": user_factory.test_user.email,
+                "password": user_factory.test_user_plain_password,
             },
         )
+
+        assert response.status_code == 200
 
         access_token = str(response.json()["access_token"])
         assert access_token

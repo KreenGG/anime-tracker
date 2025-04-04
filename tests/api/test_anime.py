@@ -1,15 +1,17 @@
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from tests.utils.anime import create_anime
+from tests.factories.anime import AnimeFactory
 
 
 async def test_get_all_anime(
     ac: AsyncClient,
     app: FastAPI,
+    anime_factory: AnimeFactory,
 ) -> None:
+    await anime_factory.create_bunch_anime()
+
     url = app.url_path_for("get_animes")
     response = await ac.get(url)
 
@@ -22,10 +24,9 @@ async def test_get_all_anime(
 
 @pytest.mark.parametrize("limit", [10, 20])
 async def test_get_all_anime_with_limit(
-    ac: AsyncClient,
-    app: FastAPI,
-    limit: int,
+    ac: AsyncClient, app: FastAPI, limit: int, anime_factory: AnimeFactory
 ) -> None:
+    await anime_factory.create_bunch_anime()
     url = app.url_path_for("get_animes")
     response = await ac.get(f"{url}?limit={limit}")
 
@@ -36,7 +37,10 @@ async def test_get_all_anime_with_limit(
 async def test_get_all_anime_with_limit_zero(
     ac: AsyncClient,
     app: FastAPI,
+    anime_factory: AnimeFactory,
 ) -> None:
+    await anime_factory.create_anime()
+
     url = app.url_path_for("get_animes")
     response = await ac.get(f"{url}?limit=0")
 
@@ -50,8 +54,11 @@ async def test_get_all_anime_with_limit_zero(
 async def test_get_all_anime_with_offset(
     ac: AsyncClient,
     app: FastAPI,
+    anime_factory: AnimeFactory,
     offset: int,
 ) -> None:
+    await anime_factory.create_bunch_anime()
+
     url = app.url_path_for("get_animes")
     response = await ac.get(f"{url}?offset={offset}")
     assert response.status_code == 200
@@ -68,9 +75,12 @@ async def test_get_all_anime_with_offset(
 async def test_get_all_anime_with_offset_and_limit(
     ac: AsyncClient,
     app: FastAPI,
+    anime_factory: AnimeFactory,
     offset: int,
     limit: int,
 ) -> None:
+    await anime_factory.create_bunch_anime()
+
     url = app.url_path_for("get_animes")
     response = await ac.get(f"{url}?offset={offset}&limit={limit}")
     assert response.status_code == 200
@@ -81,9 +91,11 @@ async def test_get_all_anime_with_offset_and_limit(
 
 
 async def test_get_anime_by_id(
-    ac: AsyncClient, app: FastAPI, db_session: AsyncSession
+    ac: AsyncClient,
+    app: FastAPI,
+    anime_factory: AnimeFactory,
 ) -> None:
-    anime = await create_anime(db_session)
+    anime = await anime_factory.create_anime()
 
     url = app.url_path_for("get_single_anime", id=anime.id)
     response = await ac.get(url)
@@ -106,8 +118,11 @@ async def test_get_anime_by_id(
 async def test_get_anime_by_id_not_found(
     ac: AsyncClient,
     app: FastAPI,
+    anime_factory: AnimeFactory,
 ) -> None:
-    url = app.url_path_for("get_single_anime", id=100000)
+    anime = await anime_factory.create_anime()
+
+    url = app.url_path_for("get_single_anime", id=anime.id + 1)
 
     response = await ac.get(url)
 
