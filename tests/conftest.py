@@ -129,11 +129,11 @@ async def ac(app) -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest.fixture(scope="module")
-async def auth_ac(app: FastAPI, user_factory: UserFactory):
+async def auth_ac_and_user(app: FastAPI, user_factory: UserFactory):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
-        await user_factory.create_test_user()
+        user = await user_factory.create_test_user()
 
         url = app.url_path_for("login")
 
@@ -151,5 +151,4 @@ async def auth_ac(app: FastAPI, user_factory: UserFactory):
         assert access_token
         authorization = "Bearer " + access_token
         ac.headers["Authorization"] = authorization
-
-        yield ac
+        yield ac, user
